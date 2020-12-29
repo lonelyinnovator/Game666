@@ -2,7 +2,7 @@ package com.Ui.java;
 
 import com.configuration.java.ModelFactory;
 import com.configuration.java.ThemeFactory;
-import com.control.java.NormalArchive;
+import com.control.java.TypicalArchive;
 
 import java.awt.*;
 
@@ -17,11 +17,11 @@ public class TypicalModeMain {
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                NormalArchive normalArchive = NormalArchive.readArchiveInfo();
-                if (normalArchive == null){
-                    normalArchive = NormalArchive.newArchive(ModelFactory.getModel(2, ThemeFactory.getTheme(2)), 0, 2, 0);
+                TypicalArchive typicalArchive = TypicalArchive.readArchiveInfo();
+                if (typicalArchive == null){
+                    typicalArchive = TypicalArchive.newArchive(ModelFactory.getTypicalModel(2, ThemeFactory.getTheme(2)));
                 }
-                TypicalModeFrame typicalModeFrame = new TypicalModeFrame(normalArchive);
+                TypicalModeFrame typicalModeFrame = new TypicalModeFrame(typicalArchive);
                 typicalModeFrame.setVisible(true);
             }
         });

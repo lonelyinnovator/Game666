@@ -1,23 +1,23 @@
 package com.control.java;
 
-import com.configuration.java.Theme;
-import com.configuration.java.MapModel;
-import com.configuration.java.ModelFactory;
-import com.configuration.java.ThemeFactory;
+import com.configuration.java.*;
 import com.map.java.Lattice;
 import com.map.java.Map;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import sun.reflect.generics.tree.TypeSignature;
 
+import javax.swing.text.StyledEditorKit;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 /**
@@ -25,16 +25,15 @@ import java.util.StringTokenizer;
  * @学号 2019302841
  * @描述
  */
-public final class NormalArchive {
-
+public class FlopArchive {
     private Map map;
-    private MapModel mapModel;
+    private FlopModel mapModel;
     private Theme theme;
     private int hour;
     private int minute;
     private int second;
 
-    private NormalArchive(Map map, MapModel mapModel, Theme theme, int hour, int minute, int second) {
+    private FlopArchive(Map map, FlopModel mapModel, Theme theme, int hour, int minute, int second) {
         this.map = map;
         this.mapModel = mapModel;
         this.theme = theme;
@@ -43,30 +42,28 @@ public final class NormalArchive {
         this.second = second;
     }
 
-    public static void saveArchiveInfo(Map map, MapModel mapModel, Theme theme, int hour, int minute, int second) {
+    public static void saveArchiveInfo(Map map, FlopModel mapModel, Theme theme,
+                                       int hour, int minute, int second) {
         try {
-            File file = new File("save/NormalArchive.xml");
+            File file = new File("save/FlopArchive.xml");
             Document doc = DocumentBuilderFactory
                     .newInstance()
                     .newDocumentBuilder()
                     .newDocument();
             Element root = doc.createElement("info");
 
-            Element e_model = doc.createElement("mapModel");
             Element e_theme = doc.createElement("theme");
             Element e_types = doc.createElement("types");
             Element e_time = doc.createElement("time");
             Element e_size = doc.createElement("size");
             Element e_map = doc.createElement("map");
 
-            root.appendChild(e_model);
             root.appendChild(e_theme);
             root.appendChild(e_types);
             root.appendChild(e_time);
             root.appendChild(e_size);
             root.appendChild(e_map);
 
-            e_model.setAttribute("value", String.valueOf(mapModel.getType()));
             e_theme.setAttribute("value", String.valueOf(theme.getThemeType()));
             e_time.setAttribute("hour", String.valueOf(hour));
             e_time.setAttribute("minute", String.valueOf(minute));
@@ -96,19 +93,18 @@ public final class NormalArchive {
             ts.setOutputProperty(OutputKeys.INDENT, "yes");
             ts.transform(new DOMSource(doc), new StreamResult(file));
 
-        } catch (Exception e) {
+        }catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public static NormalArchive readArchiveInfo() {
-        File file = new File("save/NormalArchive.xml");
+    public static FlopArchive readArchiveInfo() {
+        File file = new File("save/FlopArchive.xml");
         if (!file.exists()) {
             return null;
         }
         try {
             Map map;
-            MapModel mapModel;
             Theme theme;
             int hour, minute, second;
             int x, y;
@@ -119,18 +115,21 @@ public final class NormalArchive {
                     .parse(is);
             Element root = doc.getDocumentElement();
             Element e_theme = (Element) root.getElementsByTagName("theme").item(0);
-            theme = ThemeFactory.getTheme(Integer.parseInt(e_theme.getAttribute("value")));
-            Element e_model = (Element) root.getElementsByTagName("mapModel").item(0);
-            mapModel = ModelFactory.getModel(Integer.parseInt(e_model.getAttribute("value")), theme);
             Element e_time = (Element) root.getElementsByTagName("time").item(0);
-            hour = Integer.parseInt(e_time.getAttribute("hour"));
-            minute = Integer.parseInt(e_time.getAttribute("minute"));
-            second = Integer.parseInt(e_time.getAttribute("second"));
             Element e_size = (Element) root.getElementsByTagName("size").item(0);
+            Element e_map = (Element) root.getElementsByTagName("map").item(0);
+            Element e_types = (Element) root.getElementsByTagName("types").item(0);
+
+            StringTokenizer tokenizer = new StringTokenizer(e_types.getTextContent(), "_");
+            int[] latticeTypeList = new int[tokenizer.countTokens()];
+            int index = 0;
+            while(tokenizer.hasMoreTokens()){
+                latticeTypeList[index++] = Integer.parseInt(tokenizer.nextToken());
+            }
+
             x = Integer.parseInt(e_size.getAttribute("x"));
             y = Integer.parseInt(e_size.getAttribute("y"));
             int[][] typeArray = new int[y + 2][x + 2];
-            Element e_map = (Element) root.getElementsByTagName("map").item(0);
             NodeList rowList = e_map.getElementsByTagName("row");
             if (y + 2 == rowList.getLength()) {
                 for (int i = 0; i < rowList.getLength(); i++) {
@@ -142,24 +141,33 @@ public final class NormalArchive {
                     }
                 }
             }
+
+            theme = ThemeFactory.getTheme(Integer.parseInt(e_theme.getAttribute("value")));
+            hour = Integer.parseInt(e_time.getAttribute("hour"));
+            minute = Integer.parseInt(e_time.getAttribute("minute"));
+            second = Integer.parseInt(e_time.getAttribute("second"));
+            FlopModel model = ModelFactory.getFlogModel(theme);
+            model.setLatticeTypeList(latticeTypeList);
+            map = Map.getOldMap(model, typeArray);
+
             is.close();
-            map = Map.getOldMap(mapModel, theme, typeArray);
-            return new NormalArchive(map, mapModel, theme, hour, minute, second);
-        } catch (Exception e) {
+            return new FlopArchive(map, model, theme, hour, minute, second);
+        }catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    public static NormalArchive newArchive(MapModel mapModel, int hour, int minute, int second) {
+    public static FlopArchive newArchive() {
         Theme theme = ThemeFactory.getRandomTheme();
-        Map map = Map.getNewMap(mapModel, theme);
-        saveArchiveInfo(map, mapModel, theme, hour, minute, second);
-        return new NormalArchive(map, mapModel, theme, hour, minute, second);
+        FlopModel model = ModelFactory.getFlogModel(theme);
+        Map map = Map.getNewMap(model);
+        saveArchiveInfo(map, model, theme, 0, 2, 30);
+        return new FlopArchive(map, model, theme, 0, 2, 30);
     }
 
     public static void deleteArchive() {
-        File file = new File("save/NormalArchive.xml");
+        File file = new File("save/99.xml");
         if(file.exists()) {
             System.gc();
             file.delete();
@@ -170,7 +178,7 @@ public final class NormalArchive {
         return map;
     }
 
-    public MapModel getMapModel() {
+    public FlopModel getMapModel() {
         return mapModel;
     }
 
@@ -189,4 +197,30 @@ public final class NormalArchive {
     public int getSecond() {
         return second;
     }
+
+//    public static void main(String[] args) {
+//        Theme theme = ThemeFactory.getTheme(2);
+//        FlopModel model = ModelFactory.getFlogModel(theme);
+//        model.addLatticeTypes(new int[]{1,2,3,4});
+//        Map map = Map.getNewMap(model);
+//        map.setLimitLattice(1, 4);
+//        map.setLimitLattice(2, 4);
+//        map.setLimitLattice(3, 4);
+//        map.setLimitLattice(4, 4);
+//        saveArchiveInfo(map, model, theme, 0, 2, 30);
+//
+//        FlopArchive archive = readArchiveInfo();
+//        Map map = archive.getMap();
+//        int hour = archive.getHour();
+//        int minute = archive.getMinute();
+//        int second = archive.getSecond();
+//        System.out.println(hour);
+//        System.out.println(minute);
+//        System.out.println(second);
+//        map.check();
+//        int[] types = map.getTypeList();
+//        for(int type: types) {
+//            System.out.println(type);
+//        }
+//    }
 }

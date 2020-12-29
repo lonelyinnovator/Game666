@@ -1,5 +1,7 @@
 package com.configuration.java;
 
+import com.map.java.Lattice;
+
 import java.util.List;
 
 /**
@@ -9,7 +11,7 @@ import java.util.List;
  */
 public abstract class MapModel {
 
-    public abstract int getType();
+    public abstract int getModelType();
 
     public abstract int getPanelWidth();
 
@@ -25,5 +27,7 @@ public abstract class MapModel {
 
     public abstract int[] getLatticeTypeList();
 
-    public abstract void setLatticeTypeList(int[] latticeTypeArray);
+    public abstract  Theme getTheme();
+
+    public abstract void setLatticeTypeList(int[] latticeTypeList);
 }

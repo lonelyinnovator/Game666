@@ -14,23 +14,22 @@ public final class SimpleModel extends MapModel {
 //    private static final int PICTURE_HEIGHT = 65;
 //    private static final List<Integer> LATTICE_TYPE_LIST =
 
-    private final int PANEL_WIDTH = 720;
-    private final int PANEL_HEIGHT = 720;
+    private final int PANEL_WIDTH = 900;
+    private final int PANEL_HEIGHT = 750;
     private final int MAP_SIZE_X = 10;
     private final int MAP_SIZE_Y = 10;
     private final int PICTURE_WIDTH = 60;
     private final int PICTURE_HEIGHT = 60;
-    public static final int TYPE_NUMBER = 10;
+    private final int TYPE_NUMBER = 10;
     private int[] latticeTypeList;
+    private Theme theme;
 
-    public SimpleModel(int[] latticeTypeList) {
-        if(latticeTypeList.length != TYPE_NUMBER) {
-            throw new RuntimeException("与设定的type number 不一致！");
-        }
-        this.latticeTypeList = latticeTypeList;
+    public SimpleModel(Theme theme) {
+        this.theme = theme;
+        this.latticeTypeList = theme.getLatticeTypeList(TYPE_NUMBER);
     }
 
-    public int getType() {
+    public int getModelType() {
         return 2;
     }
 
@@ -62,7 +61,15 @@ public final class SimpleModel extends MapModel {
         return latticeTypeList;
     }
 
+    @Override
+    public Theme getTheme() {
+        return theme;
+    }
+
     public void setLatticeTypeList(int[] latticeTypeArray) {
+        if(latticeTypeArray.length != TYPE_NUMBER) {
+            throw new RuntimeException("数量不匹配！");
+        }
         this.latticeTypeList = latticeTypeArray;
     }
 }

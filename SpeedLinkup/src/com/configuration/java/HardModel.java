@@ -16,23 +16,22 @@ public final class HardModel extends MapModel {
 //    public static final int PICTURE_INIT_Y = 50;
 //    public static final int PICTURE_NUMBER = 10;
 
-    private final int PANEL_WIDTH = 720;
-    private final int PANEL_HEIGHT = 720;
+    private final int PANEL_WIDTH = 900;
+    private final int PANEL_HEIGHT = 750;
     private final int MAP_SIZE_X = 10;
     private final int MAP_SIZE_Y = 10;
     private final int PICTURE_WIDTH = 60;
     private final int PICTURE_HEIGHT = 60;
-    public static final int TYPE_NUMBER = 10;
+    private final int TYPE_NUMBER = 10;
+    private Theme theme;
     private int[] latticeTypeList;
 
-    public HardModel(int[] latticeTypeList) {
-        if(latticeTypeList.length != TYPE_NUMBER) {
-            throw new RuntimeException("与设定的type number 不一致！");
-        }
-        this.latticeTypeList = latticeTypeList;
+    public HardModel(Theme theme) {
+        this.theme = theme;
+        this.latticeTypeList = theme.getLatticeTypeList(TYPE_NUMBER);
     }
 
-    public int getType() {
+    public int getModelType() {
         return 2;
     }
 
@@ -64,7 +63,15 @@ public final class HardModel extends MapModel {
         return latticeTypeList;
     }
 
+    public Theme getTheme() {
+        return theme;
+    }
+
     public void setLatticeTypeList(int[] latticeTypeArray) {
+        if(latticeTypeArray.length != TYPE_NUMBER) {
+            throw new RuntimeException("数量不匹配！");
+        }
         this.latticeTypeList = latticeTypeArray;
     }
+
 }

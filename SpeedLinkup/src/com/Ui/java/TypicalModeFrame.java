@@ -4,13 +4,12 @@ import com.configuration.java.MapModel;
 import com.configuration.java.ModelFactory;
 import com.configuration.java.Theme;
 import com.configuration.java.ThemeFactory;
-import com.control.java.NormalArchive;
+import com.control.java.TypicalArchive;
 import com.map.java.Lattice;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.security.acl.Owner;
 import java.util.List;
 
 /**
@@ -21,7 +20,7 @@ import java.util.List;
  */
 public class TypicalModeFrame extends JFrame {
     private TypicalModePanel typicalModePanel;
-    private NormalArchive normalArchive;
+    private TypicalArchive typicalArchive;
     private MapModel model;
     private Theme theme;
     private int time;
@@ -54,14 +53,14 @@ public class TypicalModeFrame extends JFrame {
     JLabel jLabel_hard;
 
 
-    public TypicalModeFrame(NormalArchive normalArchive) {
+    public TypicalModeFrame(TypicalArchive typicalArchive) {
         super();
-        this.normalArchive = normalArchive;
-        this.model = normalArchive.getMapModel();
-        this.theme = normalArchive.getTheme();
-        this.hour = normalArchive.getHour();
-        this.minute = normalArchive.getMinute();
-        this.second = normalArchive.getSecond();
+        this.typicalArchive = typicalArchive;
+        this.model = typicalArchive.getMapModel();
+        this.theme = typicalArchive.getTheme();
+        this.hour = typicalArchive.getHour();
+        this.minute = typicalArchive.getMinute();
+        this.second = typicalArchive.getSecond();
         this.time = hour * 60 * 60 + minute * 60 + second;
         initTypicalModeFrame();
     }
@@ -91,7 +90,7 @@ public class TypicalModeFrame extends JFrame {
         this.setResizable(false);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         //主面板
-        typicalModePanel = new TypicalModePanel(this, normalArchive);
+        typicalModePanel = new TypicalModePanel(this, typicalArchive);
 
         //北边面板
         jPanel_north = new NewPanel("res/ui/north_panel.png");
@@ -112,7 +111,7 @@ public class TypicalModeFrame extends JFrame {
         jPanel_easy = new JPanel(new BorderLayout());
         jPanel_easy.setPreferredSize(new Dimension(180, 60));
         jLabel_easy = new JLabel();
-        if (model.getType() == 1) {
+        if (model.getModelType() == 1) {
             jLabel_easy.setText("当前难度");
         } else {
             jLabel_easy.setText("简单难度");
@@ -135,10 +134,10 @@ public class TypicalModeFrame extends JFrame {
             public void mouseReleased(MouseEvent e) {
                 showChangeDifficultyDialog(typicalModeFrame, typicalModeFrame);
                 if (change_difficulty_flag) {
-                    NormalArchive.deleteArchive();
-                    normalArchive = NormalArchive.newArchive(ModelFactory.getModel(1,
-                            ThemeFactory.getTheme(2)), 0, 2, 0);
-                    typicalModePanel.reDrawPanel(normalArchive);
+                    TypicalArchive.deleteArchive();
+                    typicalArchive = TypicalArchive.newArchive(ModelFactory.getTypicalModel(1,
+                            ThemeFactory.getTheme(2)));
+                    typicalModePanel.reDrawPanel(typicalArchive);
                 }
             }
 
@@ -163,7 +162,7 @@ public class TypicalModeFrame extends JFrame {
         jLabel_middle = new JLabel();
         ImageIcon imageIcon_middle_label = new ImageIcon("res/ui/middle_label.png");
         jLabel_middle.setIcon(imageIcon_middle_label);
-        if (model.getType() == 2) {
+        if (model.getModelType() == 2) {
             jLabel_middle.setText("当前难度");
         } else {
             jLabel_middle.setText("中等难度");
@@ -183,10 +182,10 @@ public class TypicalModeFrame extends JFrame {
             public void mouseReleased(MouseEvent e) {
                 showChangeDifficultyDialog(typicalModeFrame, typicalModeFrame);
                 if (change_difficulty_flag) {
-                    NormalArchive.deleteArchive();
-                    normalArchive = NormalArchive.newArchive(ModelFactory.getModel(2,
-                            ThemeFactory.getTheme(2)), 0, 2, 0);
-                    typicalModePanel.reDrawPanel(normalArchive);
+                    TypicalArchive.deleteArchive();
+                    typicalArchive = TypicalArchive.newArchive(ModelFactory.getTypicalModel(2,
+                            ThemeFactory.getTheme(2)));
+                    typicalModePanel.reDrawPanel(typicalArchive);
                 }
             }
 
@@ -209,7 +208,7 @@ public class TypicalModeFrame extends JFrame {
         jPanel_hard = new JPanel(new BorderLayout());
         jPanel_hard.setPreferredSize(new Dimension(183, 60));
         jLabel_hard = new JLabel();
-        if (model.getType() == 3) {
+        if (model.getModelType() == 3) {
             jLabel_hard.setText("当前难度");
         } else {
             jLabel_hard.setText("困难难度");
@@ -232,10 +231,10 @@ public class TypicalModeFrame extends JFrame {
             public void mouseReleased(MouseEvent e) {
                 showChangeDifficultyDialog(typicalModeFrame, typicalModeFrame);
                 if (change_difficulty_flag) {
-                    NormalArchive.deleteArchive();
-                    normalArchive = NormalArchive.newArchive(ModelFactory.getModel(3,
-                            ThemeFactory.getTheme(2)), 0, 2, 0);
-                    typicalModePanel.reDrawPanel(normalArchive);
+                    TypicalArchive.deleteArchive();
+                    typicalArchive = TypicalArchive.newArchive(ModelFactory.getTypicalModel(3,
+                            ThemeFactory.getTheme(2)));
+                    typicalModePanel.reDrawPanel(typicalArchive);
                 }
             }
 

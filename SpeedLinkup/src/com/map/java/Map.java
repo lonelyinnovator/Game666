@@ -2,6 +2,7 @@ package com.map.java;
 
 import com.configuration.java.MapModel;
 import com.configuration.java.Theme;
+import sun.security.util.ArrayUtil;
 
 import java.util.*;
 
@@ -22,7 +23,7 @@ public class Map {
     /**
      *构建新地图
      */
-    public static Map getNewMap(MapModel mapModel, Theme theme) {
+    public static Map getNewMap(MapModel mapModel) {
         return new Map(mapModel.getRowNum(), mapModel.getColumnNum(),
                 mapModel.getLatticeTypeList());
     }
@@ -30,7 +31,7 @@ public class Map {
     /**
      *从一个数组中获取一个地图
      */
-    public static Map getOldMap(MapModel mapModel, Theme theme, int[][] typeArray) {
+    public static Map getOldMap(MapModel mapModel, int[][] typeArray) {
         return new Map(mapModel.getRowNum(), mapModel.getColumnNum(),
                 mapModel.getLatticeTypeList(), typeArray);
     }
@@ -157,11 +158,11 @@ public class Map {
     public List<Lattice.Point> getSameLatticePoints() {
         Lattice.Point[] result = new Lattice.Point[2];
         if (restLatticeAmount > ((rowNum * columnNum) >> 3)) {
-            int type = -1;
+            int type = 0;
             for (int i = 1; i < rowNum + 1; i++) {
                 for (int j = 1; j < columnNum + 1; j++) {
                     if (lattices[i][j] != null) {
-                        if (type == -1) {
+                        if (type == 0) {
                             type = lattices[i][j].getType();
                             result[0] = new Lattice.Point(j, i);
                         } else if (type == lattices[i][j].getType()) {
@@ -207,15 +208,6 @@ public class Map {
 
     public int[] getTypeList() {
         return typeList;
-    }
-
-    public void setTypeList(int[] typeList) {
-        for(int i : typeList) {
-            if(i == 0) {
-                throw new RuntimeException("type不得为0！");
-            }
-        }
-        this.typeList = typeList;
     }
 
     public int getTypeNum() {

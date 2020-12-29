@@ -2,7 +2,7 @@ package com.Ui.java;
 
 import com.configuration.java.MapModel;
 import com.configuration.java.Theme;
-import com.control.java.NormalArchive;
+import com.control.java.TypicalArchive;
 import com.map.java.Lattice;
 import com.map.java.Map;
 
@@ -41,7 +41,7 @@ public class TypicalModePanel extends JPanel implements MouseMotionListener, Mou
     private static boolean musicFlag = true;
     private static double musicValue = 1.0;
     private String[] musics = new String[]{};
-    public NormalArchive normalArchive;
+    public TypicalArchive typicalArchive;
     private MapModel model;
     private Theme theme;
     private int hour;
@@ -50,23 +50,23 @@ public class TypicalModePanel extends JPanel implements MouseMotionListener, Mou
     public int time;
     private Image offScreenImage;
 
-    public TypicalModePanel(TypicalModeFrame typicalModeFrame, NormalArchive normalArchive) {
+    public TypicalModePanel(TypicalModeFrame typicalModeFrame, TypicalArchive typicalArchive) {
         super();
         this.addMouseListener(this);
         this.addMouseMotionListener(this);
-        initTypicalModePanel(typicalModeFrame, normalArchive);
+        initTypicalModePanel(typicalModeFrame, typicalArchive);
     }
 
     /**
      * 初始化游戏面板
      *
      * @param typicalModeFrame
-     * @param normalArchive
+     * @param typicalArchive
      * @return void
      */
-    public void initTypicalModePanel(TypicalModeFrame typicalModeFrame, NormalArchive normalArchive) {
+    public void initTypicalModePanel(TypicalModeFrame typicalModeFrame, TypicalArchive typicalArchive) {
         this.typicalModeFrame = typicalModeFrame;
-        this.model = normalArchive.getMapModel();
+        this.model = typicalArchive.getMapModel();
         this.setBackground(Color.BLACK);
         this.map_size_x = model.getColumnNum();
         this.map_size_y = model.getRowNum();
@@ -76,12 +76,12 @@ public class TypicalModePanel extends JPanel implements MouseMotionListener, Mou
         this.picture_init_y = model.getPictureHeight();
         this.panel_width = model.getPanelWidth();
         this.panel_height = model.getPanelHeight();
-        this.normalArchive = normalArchive;
-        this.theme = normalArchive.getTheme();
-        this.hour = normalArchive.getHour();
-        this.minute = normalArchive.getMinute();
-        this.second = normalArchive.getSecond();
-        this.map = normalArchive.getMap();
+        this.typicalArchive = typicalArchive;
+        this.theme = typicalArchive.getTheme();
+        this.hour = typicalArchive.getHour();
+        this.minute = typicalArchive.getMinute();
+        this.second = typicalArchive.getSecond();
+        this.map = typicalArchive.getMap();
         this.time = hour * 60 * 60 + minute * 60 + second;
         new Thread(() -> {
             while (true) {
@@ -243,7 +243,7 @@ public class TypicalModePanel extends JPanel implements MouseMotionListener, Mou
                 drawLine(Color.BLACK);
                 map.removeLattice(pointOne);
                 map.removeLattice(pointTwo);
-                NormalArchive.saveArchiveInfo(map, model, theme, hour, minute, second);
+                TypicalArchive.saveArchiveInfo(map, model, theme, hour, minute, second);
                 System.out.println(true);
 //                drawAllImage(g);
                 validate();
@@ -252,7 +252,7 @@ public class TypicalModePanel extends JPanel implements MouseMotionListener, Mou
 //                g.drawImage(null, changeLocation(pointTwo)[0], changeLocation(pointTwo)[1],
 //                        picture_width, picture_height, this);
                 if (map.getAvailableLattices() == null) {
-                    NormalArchive.deleteArchive();
+                    TypicalArchive.deleteArchive();
                     if (map.getRestLatticeAmount() == 0) {
                         showSuccessDialog(typicalModeFrame, typicalModeFrame);
                     } else {
@@ -291,14 +291,14 @@ public class TypicalModePanel extends JPanel implements MouseMotionListener, Mou
 //                    drawLine(Color.BLACK);
                     map.removeLattice(pointOne);
                     map.removeLattice(pointTwo);
-                    NormalArchive.saveArchiveInfo(map, model, theme, hour, minute, second);
+                    TypicalArchive.saveArchiveInfo(map, model, theme, hour, minute, second);
                     System.out.println(true);
                     g.fillRect(changeLocation(pointOne)[0], changeLocation(pointOne)[1],
                             picture_width + 1, picture_height + 1);
                     g.fillRect(changeLocation(pointTwo)[0], changeLocation(pointTwo)[1],
                             picture_width + 1, picture_height + 1);
                     if (map.getAvailableLattices() == null) {
-                        NormalArchive.deleteArchive();
+                        TypicalArchive.deleteArchive();
                         if (map.getRestLatticeAmount() == 0) {
                             showSuccessDialog(typicalModeFrame, typicalModeFrame);
                         } else {
@@ -479,7 +479,7 @@ public class TypicalModePanel extends JPanel implements MouseMotionListener, Mou
                 e.printStackTrace();
             }
         }
-        NormalArchive.deleteArchive();
+        TypicalArchive.deleteArchive();
     }
 
     /**
@@ -537,8 +537,8 @@ public class TypicalModePanel extends JPanel implements MouseMotionListener, Mou
         newGame_button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                normalArchive = NormalArchive.newArchive(model, hour, minute, second);
-                reDrawPanel(normalArchive);
+                typicalArchive = TypicalArchive.newArchive(model);
+                reDrawPanel(typicalArchive);
                 dialog.dispose();
             }
         });
@@ -615,10 +615,10 @@ public class TypicalModePanel extends JPanel implements MouseMotionListener, Mou
         dialog.setVisible(true);
     }
 
-    public void reDrawPanel(NormalArchive normalArchive){
+    public void reDrawPanel(TypicalArchive typicalArchive){
         Graphics g = getGraphics();
 
-        initTypicalModePanel(typicalModeFrame, normalArchive);
+        initTypicalModePanel(typicalModeFrame, typicalArchive);
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, panel_width, panel_height);
         drawAllImage(g);

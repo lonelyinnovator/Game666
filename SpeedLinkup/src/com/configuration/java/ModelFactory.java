@@ -6,16 +6,24 @@ package com.configuration.java;
  * @描述
  */
 public abstract class ModelFactory {
-    public static MapModel getModel(int choice, Theme theme) {
+    public static MapModel getTypicalModel(int choice, Theme theme) {
         if(choice == 1) {
-            return new SimpleModel(theme.getLatticeTypeList(SimpleModel.TYPE_NUMBER));
+            return new SimpleModel(theme);
         }
         if(choice == 2) {
-            return new MiddleModel(theme.getLatticeTypeList(MiddleModel.TYPE_NUMBER));
+            return new MiddleModel(theme);
         }
         if(choice == 3) {
-            return new HardModel(theme.getLatticeTypeList(HardModel.TYPE_NUMBER));
+            return new HardModel(theme);
         }
         throw new RuntimeException();
+    }
+
+//    public static EndlessModel getEndlessModel(int[] latticeTypeList) {
+//        return new EndlessModel(latticeTypeList);
+//    }
+
+    public static FlopModel getFlogModel(Theme theme) {
+        return new FlopModel(theme);
     }
 }
