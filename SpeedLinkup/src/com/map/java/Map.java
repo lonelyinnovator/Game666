@@ -139,10 +139,10 @@ public class Map {
             }
 
         }
+        System.err.println("出现死锁！");
         System.err.println("剩余数量：" + getRestLatticeAmount());
         check();
-//        return null;
-        throw new RuntimeException();
+        return null;
     }
 
     /**
