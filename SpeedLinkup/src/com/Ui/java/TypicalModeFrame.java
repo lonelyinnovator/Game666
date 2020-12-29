@@ -135,8 +135,7 @@ public class TypicalModeFrame extends JFrame {
                 showChangeDifficultyDialog(typicalModeFrame, typicalModeFrame);
                 if (change_difficulty_flag) {
                     TypicalArchive.deleteArchive();
-                    typicalArchive = TypicalArchive.newArchive(ModelFactory.getTypicalModel(1,
-                            ThemeFactory.getTheme(2)));
+                    typicalArchive = TypicalArchive.newArchive(ModelFactory.getTypicalModel(1));
                     typicalModePanel.reDrawPanel(typicalArchive);
                 }
             }
@@ -183,8 +182,7 @@ public class TypicalModeFrame extends JFrame {
                 showChangeDifficultyDialog(typicalModeFrame, typicalModeFrame);
                 if (change_difficulty_flag) {
                     TypicalArchive.deleteArchive();
-                    typicalArchive = TypicalArchive.newArchive(ModelFactory.getTypicalModel(2,
-                            ThemeFactory.getTheme(2)));
+                    typicalArchive = TypicalArchive.newArchive(ModelFactory.getTypicalModel(2));
                     typicalModePanel.reDrawPanel(typicalArchive);
                 }
             }
@@ -232,8 +230,7 @@ public class TypicalModeFrame extends JFrame {
                 showChangeDifficultyDialog(typicalModeFrame, typicalModeFrame);
                 if (change_difficulty_flag) {
                     TypicalArchive.deleteArchive();
-                    typicalArchive = TypicalArchive.newArchive(ModelFactory.getTypicalModel(3,
-                            ThemeFactory.getTheme(2)));
+                    typicalArchive = TypicalArchive.newArchive(ModelFactory.getTypicalModel(3));
                     typicalModePanel.reDrawPanel(typicalArchive);
                 }
             }

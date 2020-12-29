@@ -167,7 +167,7 @@ public class FlopArchive {
     }
 
     public static void deleteArchive() {
-        File file = new File("save/99.xml");
+        File file = new File("save/FlopArchive.xml");
         if(file.exists()) {
             System.gc();
             file.delete();

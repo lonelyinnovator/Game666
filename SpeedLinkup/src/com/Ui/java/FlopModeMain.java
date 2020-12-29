@@ -14,12 +14,9 @@ public class FlopModeMain {
                 if (archive == null){
                     archive = FlopArchive.newArchive();
                 }
-//                MainFrame mainFrame = new MainFrame(normalArchive);
                 FlopModeFrame flopModeFrame = new FlopModeFrame(archive);
                 flopModeFrame.setVisible(true);
                 flopModeFrame.setResizable(true);
-//                mainFrame.setVisible(true);
-//                mainFrame.setResizable(true);
             }
         });
     }

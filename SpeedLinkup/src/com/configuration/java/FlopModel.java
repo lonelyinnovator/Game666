@@ -58,7 +58,6 @@ public class FlopModel extends MapModel{
         return latticeTypeList;
     }
 
-    @Override
     public Theme getTheme() {
         return theme;
     }

@@ -19,7 +19,7 @@ public class TypicalModeMain {
             public void run() {
                 TypicalArchive typicalArchive = TypicalArchive.readArchiveInfo();
                 if (typicalArchive == null){
-                    typicalArchive = TypicalArchive.newArchive(ModelFactory.getTypicalModel(2, ThemeFactory.getTheme(2)));
+                    typicalArchive = TypicalArchive.newArchive(ModelFactory.getTypicalModel(2));
                 }
                 TypicalModeFrame typicalModeFrame = new TypicalModeFrame(typicalArchive);
                 typicalModeFrame.setVisible(true);

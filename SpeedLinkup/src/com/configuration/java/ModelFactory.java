@@ -6,7 +6,8 @@ package com.configuration.java;
  * @描述
  */
 public abstract class ModelFactory {
-    public static MapModel getTypicalModel(int choice, Theme theme) {
+    public static MapModel getTypicalModel(int choice) {
+        Theme theme = ThemeFactory.getRandomTheme();
         if(choice == 1) {
             return new SimpleModel(theme);
         }
@@ -19,9 +20,9 @@ public abstract class ModelFactory {
         throw new RuntimeException();
     }
 
-//    public static EndlessModel getEndlessModel(int[] latticeTypeList) {
-//        return new EndlessModel(latticeTypeList);
-//    }
+    public static EndlessModel getEndlessModel(Theme theme) {
+        return new EndlessModel(theme);
+    }
 
     public static FlopModel getFlogModel(Theme theme) {
         return new FlopModel(theme);

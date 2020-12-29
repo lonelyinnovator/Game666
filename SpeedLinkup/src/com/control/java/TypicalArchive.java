@@ -44,7 +44,7 @@ public final class TypicalArchive {
 
     public static void saveArchiveInfo(Map map, MapModel mapModel, Theme theme, int hour, int minute, int second) {
         try {
-            File file = new File("save/99.xml");
+            File file = new File("save/TypicalArchive.xml");
             Document doc = DocumentBuilderFactory
                     .newInstance()
                     .newDocumentBuilder()
@@ -101,7 +101,7 @@ public final class TypicalArchive {
     }
 
     public static TypicalArchive readArchiveInfo() {
-        File file = new File("save/99.xml");
+        File file = new File("save/TypicalArchive.xml");
         if (!file.exists()) {
             return null;
         }
@@ -120,7 +120,7 @@ public final class TypicalArchive {
             Element e_theme = (Element) root.getElementsByTagName("theme").item(0);
             theme = ThemeFactory.getTheme(Integer.parseInt(e_theme.getAttribute("value")));
             Element e_model = (Element) root.getElementsByTagName("mapModel").item(0);
-            mapModel = ModelFactory.getTypicalModel(Integer.parseInt(e_model.getAttribute("value")), theme);
+            mapModel = ModelFactory.getTypicalModel(Integer.parseInt(e_model.getAttribute("value")));
             Element e_time = (Element) root.getElementsByTagName("time").item(0);
             hour = Integer.parseInt(e_time.getAttribute("hour"));
             minute = Integer.parseInt(e_time.getAttribute("minute"));
@@ -159,7 +159,7 @@ public final class TypicalArchive {
     }
 
     public static void deleteArchive() {
-        File file = new File("save/99.xml");
+        File file = new File("save/TypicalArchive.xml");
         if(file.exists()) {
             System.gc();
             file.delete();
