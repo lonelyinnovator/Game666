@@ -140,6 +140,16 @@ public final class TypicalArchive {
             minute = Integer.parseInt(e_time.getAttribute("minute"));
             second = Integer.parseInt(e_time.getAttribute("second"));
             Element e_size = (Element) root.getElementsByTagName("size").item(0);
+            Element e_types = (Element) root.getElementsByTagName("types").item(0);
+
+            StringTokenizer tokenizer = new StringTokenizer(e_types.getTextContent(), "_");
+            int[] latticeTypeList = new int[tokenizer.countTokens()];
+            int index = 0;
+            while(tokenizer.hasMoreTokens()) {
+                latticeTypeList[index ++] = Integer.parseInt(tokenizer.nextToken());
+            }
+
+
             x = Integer.parseInt(e_size.getAttribute("x"));
             y = Integer.parseInt(e_size.getAttribute("y"));
             int[][] typeArray = new int[y + 2][x + 2];
@@ -158,6 +168,7 @@ public final class TypicalArchive {
 
             is.close();
             map = Map.getOldMap(mapModel, typeArray);
+            mapModel.setLatticeTypeList(latticeTypeList);
             return new TypicalArchive(map, mapModel, theme, hour, minute, second);
         } catch (Exception e) {
             e.printStackTrace();
