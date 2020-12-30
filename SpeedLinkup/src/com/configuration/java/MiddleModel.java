@@ -63,4 +63,9 @@ public final class MiddleModel extends MapModel {
         }
         this.latticeTypeList = latticeTypeArray;
     }
+
+    @Override
+    public int getTypeNum() {
+        return TYPE_NUMBER;
+    }
 }

@@ -33,43 +33,37 @@ public class TypicalModePanel extends JPanel implements MouseMotionListener, Mou
     private int panel_width;
     private int panel_height;
     public Map map;
+    public MapModel model;
     public int clickedNum = 0;
     public TypicalModeFrame typicalModeFrame;
     private String countDown;
     private Lattice.Point point1 = new Lattice.Point(0, 0);
     private Lattice.Point point2 = new Lattice.Point(0, 0);
-    public static boolean musicFlag = true;
-    private static double musicValue = 1.0;
-    public String[] musics = new String[]{"res/music/Battle1.wav"};
     public TypicalArchive typicalArchive;
-    public MapModel model;
-    public Theme theme;
-    public int hour;
-    public int minute;
-    public int second;
-    public int time;
+    //    public Theme theme;
+//    public int hour;
+//    public int minute;
+//    public int second;
+//    public int time;
     private Image offScreenImage;
     private boolean time_flag = true;
-    public Thread music_thread;
 
-    public TypicalModePanel(TypicalModeFrame typicalModeFrame, TypicalArchive typicalArchive) {
+    public TypicalModePanel(TypicalModeFrame typicalModeFrame) {
         super();
         this.addMouseListener(this);
         this.addMouseMotionListener(this);
-        initTypicalModePanel(typicalModeFrame, typicalArchive);
+        initTypicalModePanel(typicalModeFrame);
     }
 
     /**
      * 初始化游戏面板
      *
      * @param typicalModeFrame
-     * @param typicalArchive
      * @return void
      */
-    public void initTypicalModePanel(TypicalModeFrame typicalModeFrame, TypicalArchive typicalArchive) {
+    public void initTypicalModePanel(TypicalModeFrame typicalModeFrame) {
         this.typicalModeFrame = typicalModeFrame;
-        this.model = typicalArchive.getMapModel();
-        this.setBackground(Color.BLACK);
+        this.model = typicalModeFrame.typicalArchive.getMapModel();
         this.map_size_x = model.getColumnNum();
         this.map_size_y = model.getRowNum();
         this.picture_width = model.getPictureWidth();
@@ -78,23 +72,8 @@ public class TypicalModePanel extends JPanel implements MouseMotionListener, Mou
         this.picture_init_y = model.getPictureHeight();
         this.panel_width = model.getPanelWidth();
         this.panel_height = model.getPanelHeight();
-        this.typicalArchive = typicalArchive;
-        this.theme = typicalArchive.getTheme();
-        this.hour = typicalArchive.getHour();
-        this.minute = typicalArchive.getMinute();
-        this.second = typicalArchive.getSecond();
-        this.map = typicalArchive.getMap();
-        if (time_flag) {
-            this.time = hour * 60 * 60 + minute * 60 + second;
-            time_flag = false;
-        }
-        music_thread = new Thread(()->playMusic(musics));
-        music_thread.start();
-//        new Thread(() -> {
-//            while (true) {
-//                playMusic(musics);
-//            }
-//        }).start();
+        this.map = typicalModeFrame.typicalArchive.getMap();
+
     }
 
 
@@ -222,7 +201,8 @@ public class TypicalModePanel extends JPanel implements MouseMotionListener, Mou
                 drawLine(Color.BLACK);
                 map.removeLattice(pointOne);
                 map.removeLattice(pointTwo);
-                TypicalArchive.saveArchiveInfo(map, model, theme, hour, minute, second);
+                TypicalArchive.saveArchiveInfo(map, model, typicalModeFrame.typicalArchive.getTheme(),
+                        typicalModeFrame.time);
                 System.out.println(true);
 //                drawAllImage(g);
                 update(g);
@@ -232,11 +212,11 @@ public class TypicalModePanel extends JPanel implements MouseMotionListener, Mou
 //                        picture_width, picture_height, this);
                 if (map.getAvailableLattices() == null) {
                     TypicalArchive.deleteArchive();
-                    musicFlag = false;
+                    typicalModeFrame.musicFlag = false;
                     if (map.getRestLatticeAmount() == 0) {
-                        showSuccessDialog(typicalModeFrame, typicalModeFrame);
+                        typicalModeFrame.showSuccessDialog();
                     } else {
-                        showFailedDialog(typicalModeFrame, typicalModeFrame);
+                        typicalModeFrame.showFailedDialog();
                     }
                 }
             } else {
@@ -270,7 +250,8 @@ public class TypicalModePanel extends JPanel implements MouseMotionListener, Mou
 //                    drawLine(Color.BLACK);
                     map.removeLattice(pointOne);
                     map.removeLattice(pointTwo);
-                    TypicalArchive.saveArchiveInfo(map, model, theme, hour, minute, second);
+                    TypicalArchive.saveArchiveInfo(map, model, typicalModeFrame.typicalArchive.getTheme(),
+                            typicalModeFrame.time);
                     System.out.println(true);
                     g.fillRect(changeLocation(pointOne)[0], changeLocation(pointOne)[1],
                             picture_width + 1, picture_height + 1);
@@ -279,9 +260,9 @@ public class TypicalModePanel extends JPanel implements MouseMotionListener, Mou
                     if (map.getAvailableLattices() == null) {
                         TypicalArchive.deleteArchive();
                         if (map.getRestLatticeAmount() == 0) {
-                            showSuccessDialog(typicalModeFrame, typicalModeFrame);
+                            typicalModeFrame.showSuccessDialog();
                         } else {
-                            showFailedDialog(typicalModeFrame, typicalModeFrame);
+                            typicalModeFrame.showFailedDialog();
                         }
                     }
                 } else {
@@ -442,44 +423,6 @@ public class TypicalModePanel extends JPanel implements MouseMotionListener, Mou
         }
     }
 
-    /**
-     * 播放背景音乐
-     *
-     * @param
-     * @return void
-     */
-    public void playMusic(String[] musics) {
-        try {
-            for (String music : musics) {
-                AudioInputStream ais = AudioSystem.getAudioInputStream(new File(music));
-                AudioFormat aif = ais.getFormat();
-                final SourceDataLine sdl;
-                DataLine.Info info = new DataLine.Info(SourceDataLine.class, aif);
-                sdl = (SourceDataLine) AudioSystem.getLine(info);
-                sdl.open(aif);
-                sdl.start();
-                FloatControl fc = (FloatControl) sdl.getControl(FloatControl.Type.MASTER_GAIN);
-                // musicValue可以用来设置音量，从0-2.0
-                float dB = (float) (Math.log(musicValue == 0.0 ? 0.0001 : musicValue) / Math.log(10.0) * 20.0);
-                fc.setValue(dB);
-                int nByte = 0;
-                int writeByte = 0;
-                final int SIZE = 1024 * 64;
-                byte[] buffer = new byte[SIZE];
-                while (nByte != -1) {// 判断 播放/暂停 状态
-                    if (musicFlag) {
-                        nByte = ais.read(buffer, 0, SIZE);
-                        sdl.write(buffer, 0, nByte);
-                    } else {
-                        nByte = ais.read(buffer, 0, 0);
-                    }
-                }
-                sdl.stop();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     /**
      * 自动连连看
@@ -502,145 +445,10 @@ public class TypicalModePanel extends JPanel implements MouseMotionListener, Mou
         TypicalArchive.deleteArchive();
     }
 
-    /**
-     * 游戏成功通关后弹出胜利对话框
-     *
-     * @param owner
-     * @param parentComponent
-     * @return void
-     */
-    public void showSuccessDialog(Frame owner, Component parentComponent) {
+
+
+    public void reDrawPanel() {
         Graphics g = getGraphics();
-        // 对话框
-        final JDialog dialog = new JDialog(owner, "Success", true);
-        dialog.setSize(500, 500);
-        dialog.setResizable(false);
-        dialog.setLocationRelativeTo(parentComponent);
-
-        //对话框面板
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEADING, 100, 70));
-        panel.setBackground(Color.CYAN);
-
-        //设置字体
-        Font f = new Font("等线", Font.BOLD, 24);
-
-        //游戏成功通关面板
-        JPanel success_panel = new JPanel(new BorderLayout());
-        success_panel.setPreferredSize(new Dimension(300, 50));
-        success_panel.setBackground(Color.PINK);
-        JLabel success_label = new JLabel("Game Success, 666666!", JLabel.CENTER);
-        success_label.setFont(f);
-        success_panel.add(success_label, BorderLayout.CENTER);
-
-        //返回开始界面面板
-        JPanel return_panel = new JPanel(new BorderLayout());
-        return_panel.setPreferredSize(new Dimension(300, 50));
-        JButton return_button = new JButton("返回开始界面");
-        return_button.setFocusPainted(false);
-        return_button.setBackground(Color.RED);
-        return_button.setFont(f);
-        return_button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dialog.dispose();
-            }
-        });
-        return_panel.add(return_button, BorderLayout.CENTER);
-
-        //新游戏界面面板
-        JPanel newGame_panel = new JPanel(new BorderLayout());
-        newGame_panel.setPreferredSize(new Dimension(300, 50));
-        JButton newGame_button = new JButton("开始新游戏");
-        newGame_button.setFocusPainted(false);
-        newGame_button.setBackground(Color.ORANGE);
-        newGame_button.setFont(f);
-        newGame_button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                typicalArchive = TypicalArchive.newArchive(model);
-                playMusic(musics);
-                reDrawPanel(typicalArchive);
-                dialog.dispose();
-            }
-        });
-        newGame_panel.add(newGame_button, BorderLayout.CENTER);
-        panel.add(success_panel);
-        panel.add(return_panel);
-        panel.add(newGame_panel);
-        dialog.setContentPane(panel);
-        dialog.setVisible(true);
-    }
-
-    /**
-     * 游戏失败后弹出失败对话框
-     *
-     * @param owner
-     * @param parentComponent
-     * @return void
-     */
-    public void showFailedDialog(TypicalModeFrame owner, TypicalModeFrame parentComponent) {
-        // 对话框
-        final JDialog dialog = new JDialog(owner, "Failed", true);
-        dialog.setSize(500, 500);
-        dialog.setResizable(false);
-        dialog.setLocationRelativeTo(parentComponent);
-
-        //对话框面板
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEADING, 100, 70));
-        panel.setBackground(Color.RED);
-
-        //设置字体
-        Font f = new Font("等线", Font.BOLD, 24);
-
-        //游戏成功通关面板
-        JPanel success_panel = new JPanel(new BorderLayout());
-        success_panel.setPreferredSize(new Dimension(300, 50));
-        success_panel.setBackground(Color.ORANGE);
-        JLabel success_label = new JLabel("Game Failed, hhhhhhh!", JLabel.CENTER);
-        success_label.setFont(f);
-        success_panel.add(success_label, BorderLayout.CENTER);
-
-        //返回开始界面面板
-        JPanel return_panel = new JPanel(new BorderLayout());
-        return_panel.setPreferredSize(new Dimension(300, 50));
-        JButton return_button = new JButton("返回开始界面");
-        return_button.setFocusPainted(false);
-        return_button.setBackground(Color.ORANGE);
-        return_button.setFont(f);
-        return_button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dialog.dispose();
-            }
-        });
-        return_panel.add(return_button, BorderLayout.CENTER);
-
-        //新游戏界面面板
-        JPanel newGame_panel = new JPanel(new BorderLayout());
-        newGame_panel.setPreferredSize(new Dimension(300, 50));
-        JButton newGame_button = new JButton("开始新游戏");
-        newGame_button.setFocusPainted(false);
-        newGame_button.setBackground(Color.ORANGE);
-        newGame_button.setFont(f);
-        newGame_button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                typicalArchive = TypicalArchive.newArchive(model);
-                reDrawPanel(typicalArchive);
-                dialog.dispose();
-            }
-        });
-        newGame_panel.add(newGame_button, BorderLayout.CENTER);
-        panel.add(success_panel);
-        panel.add(return_panel);
-        panel.add(newGame_panel);
-        dialog.setContentPane(panel);
-        dialog.setVisible(true);
-    }
-
-    public void reDrawPanel(TypicalArchive typicalArchive) {
-        Graphics g = getGraphics();
-        initTypicalModePanel(typicalModeFrame, typicalArchive);
         update(g);
     }
 

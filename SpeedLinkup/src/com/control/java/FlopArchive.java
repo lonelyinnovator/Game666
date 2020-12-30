@@ -10,6 +10,7 @@ import org.w3c.dom.NodeList;
 import javax.swing.text.StyledEditorKit;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -17,6 +18,7 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.lang.reflect.AnnotatedArrayType;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
@@ -32,18 +34,39 @@ public class FlopArchive {
     private int hour;
     private int minute;
     private int second;
+    private int promptNum;
+    private int timeIncreaseNum;
 
-    private FlopArchive(Map map, FlopModel mapModel, Theme theme, int hour, int minute, int second) {
+    private FlopArchive(Map map, FlopModel mapModel, Theme theme,
+                        int hour, int minute, int second,
+                        int promptNum, int timeIncreaseNum) {
         this.map = map;
         this.mapModel = mapModel;
         this.theme = theme;
         this.hour = hour;
         this.minute = minute;
         this.second = second;
+        this.promptNum = promptNum;
+        this.timeIncreaseNum = timeIncreaseNum;
+    }
+
+    public static void saveArchiveInfo(FlopArchive archive) {
+        saveArchiveInfo(archive.getMap(), archive.getMapModel(), archive.getTheme(),
+                archive.getHour(), archive.getMinute(), archive.getSecond(),
+                archive.getPromptNum(), archive.getTimeIncreaseNum());
     }
 
     public static void saveArchiveInfo(Map map, FlopModel mapModel, Theme theme,
-                                       int hour, int minute, int second) {
+                                       int time, int promptNum, int timeIncreaseNum) {
+        int hour = time / 3600;
+        int minute = time / 60 % 60;
+        int second = time / 60;
+        saveArchiveInfo(map, mapModel, theme, hour, minute, second, promptNum, timeIncreaseNum);
+    }
+
+    private static void saveArchiveInfo(Map map, FlopModel mapModel, Theme theme,
+                                       int hour, int minute, int second,
+                                       int promptNum, int timeIncreaseNum) {
         try {
             File file = new File("save/FlopArchive.xml");
             Document doc = DocumentBuilderFactory
@@ -57,12 +80,16 @@ public class FlopArchive {
             Element e_time = doc.createElement("time");
             Element e_size = doc.createElement("size");
             Element e_map = doc.createElement("map");
+            Element e_promptNum = doc.createElement("promptNum");
+            Element e_timeIncreaseNum = doc.createElement("timeIncreaseNum");
 
             root.appendChild(e_theme);
             root.appendChild(e_types);
             root.appendChild(e_time);
             root.appendChild(e_size);
             root.appendChild(e_map);
+            root.appendChild(e_promptNum);
+            root.appendChild(e_timeIncreaseNum);
 
             e_theme.setAttribute("value", String.valueOf(theme.getThemeType()));
             e_time.setAttribute("hour", String.valueOf(hour));
@@ -70,6 +97,8 @@ public class FlopArchive {
             e_time.setAttribute("second", String.valueOf(second));
             e_size.setAttribute("x", String.valueOf(mapModel.getColumnNum()));
             e_size.setAttribute("y", String.valueOf(mapModel.getRowNum()));
+            e_promptNum.setAttribute("value", String.valueOf(promptNum));
+            e_timeIncreaseNum.setAttribute("value", String.valueOf(timeIncreaseNum));
 
             String types = "";
             for(int i = 0; i < mapModel.getLatticeTypeList().length; i++) {
@@ -108,6 +137,7 @@ public class FlopArchive {
             Theme theme;
             int hour, minute, second;
             int x, y;
+            int promptNum, timeIncreaseNum;
             InputStream is = new FileInputStream(file);
             Document doc = DocumentBuilderFactory
                     .newInstance()
@@ -119,6 +149,8 @@ public class FlopArchive {
             Element e_size = (Element) root.getElementsByTagName("size").item(0);
             Element e_map = (Element) root.getElementsByTagName("map").item(0);
             Element e_types = (Element) root.getElementsByTagName("types").item(0);
+            Element e_promptNum = (Element) root.getElementsByTagName("promptNum").item(0);
+            Element e_timeIncreaseNum = (Element) root.getElementsByTagName("timeIncreaseNum").item(0);
 
             StringTokenizer tokenizer = new StringTokenizer(e_types.getTextContent(), "_");
             int[] latticeTypeList = new int[tokenizer.countTokens()];
@@ -146,24 +178,28 @@ public class FlopArchive {
             hour = Integer.parseInt(e_time.getAttribute("hour"));
             minute = Integer.parseInt(e_time.getAttribute("minute"));
             second = Integer.parseInt(e_time.getAttribute("second"));
+            promptNum = Integer.parseInt(e_promptNum.getAttribute("value"));
+            timeIncreaseNum = Integer.parseInt(e_timeIncreaseNum.getAttribute("value"));
             FlopModel model = ModelFactory.getFlogModel(theme);
             model.setLatticeTypeList(latticeTypeList);
             map = Map.getOldMap(model, typeArray);
 
             is.close();
-            return new FlopArchive(map, model, theme, hour, minute, second);
+            return new FlopArchive(map, model, theme, hour, minute, second, promptNum, timeIncreaseNum);
         }catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
 
+
     public static FlopArchive newArchive() {
         Theme theme = ThemeFactory.getRandomTheme();
         FlopModel model = ModelFactory.getFlogModel(theme);
         Map map = Map.getNewMap(model);
 //        saveArchiveInfo(map, model, theme, 0, 2, 30);
-        return new FlopArchive(map, model, theme, 0, 2, 30);
+        return new FlopArchive(map, model, theme, 0, 2, 30,
+                3, 3);
     }
 
     public static void deleteArchive() {
@@ -198,6 +234,14 @@ public class FlopArchive {
         return second;
     }
 
+    public int getPromptNum() {
+        return promptNum;
+    }
+
+    public int getTimeIncreaseNum() {
+        return timeIncreaseNum;
+    }
+
 //    public static void main(String[] args) {
 //        Theme theme = ThemeFactory.getTheme(2);
 //        FlopModel model = ModelFactory.getFlogModel(theme);
@@ -207,16 +251,25 @@ public class FlopArchive {
 //        map.setLimitLattice(2, 4);
 //        map.setLimitLattice(3, 4);
 //        map.setLimitLattice(4, 4);
-//        saveArchiveInfo(map, model, theme, 0, 2, 30);
+//        saveArchiveInfo(map, model, theme, 0);
+
+//        FlopArchive archive = FlopArchive.newArchive();
+//        saveArchiveInfo(archive.map, archive.mapModel, archive.theme,
+//                archive.hour, archive.minute, archive.second,
+//                archive.promptNum, archive.promptNum);
 //
 //        FlopArchive archive = readArchiveInfo();
 //        Map map = archive.getMap();
 //        int hour = archive.getHour();
 //        int minute = archive.getMinute();
 //        int second = archive.getSecond();
+//        int promptNum = archive.getPromptNum();
+//        int timeIncreaseNum = archive.getTimeIncreaseNum();
 //        System.out.println(hour);
 //        System.out.println(minute);
 //        System.out.println(second);
+//        System.out.println(promptNum);
+//        System.out.println(timeIncreaseNum);
 //        map.check();
 //        int[] types = map.getTypeList();
 //        for(int type: types) {

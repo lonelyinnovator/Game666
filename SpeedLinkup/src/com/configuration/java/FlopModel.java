@@ -8,7 +8,7 @@ import java.util.Set;
  * @学号 2019302841
  * @描述
  */
-public class FlopModel extends MapModel{
+public class FlopModel extends MapModel {
     private final int PANEL_WIDTH = 750;
     private final int PANEL_HEIGHT = 750;
     private final int MAP_SIZE_X = 4;
@@ -68,11 +68,11 @@ public class FlopModel extends MapModel{
 
     public void addLatticeTypes(int[] newLatticeTypes) {
         Set<Integer> set = new HashSet<>();
-        for(int type : this.latticeTypeList) {
+        for (int type : this.latticeTypeList) {
             set.add(type);
         }
-        for(int type: newLatticeTypes) {
-            if(type <= 0) {
+        for (int type : newLatticeTypes) {
+            if (type <= 0) {
                 throw new RuntimeException("type必须为正数");
             }
             set.add(type);
@@ -80,7 +80,7 @@ public class FlopModel extends MapModel{
         this.typeNum = set.size();
         this.latticeTypeList = new int[typeNum];
         int index = 0;
-        for(int type: set) {
+        for (int type : set) {
             latticeTypeList[index++] = type;
         }
     }
@@ -89,4 +89,5 @@ public class FlopModel extends MapModel{
         this.typeNum = latticeTypeArray.length;
         this.latticeTypeList = latticeTypeArray;
     }
+
 }

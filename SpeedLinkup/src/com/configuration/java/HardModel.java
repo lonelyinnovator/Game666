@@ -32,7 +32,7 @@ public final class HardModel extends MapModel {
     }
 
     public int getModelType() {
-        return 2;
+        return 3;
     }
 
     public int getPanelWidth() {
@@ -68,10 +68,15 @@ public final class HardModel extends MapModel {
     }
 
     public void setLatticeTypeList(int[] latticeTypeArray) {
-        if(latticeTypeArray.length != TYPE_NUMBER) {
+        if (latticeTypeArray.length != TYPE_NUMBER) {
             throw new RuntimeException("数量不匹配！");
         }
         this.latticeTypeList = latticeTypeArray;
+    }
+
+    @Override
+    public int getTypeNum() {
+        return TYPE_NUMBER;
     }
 
 }

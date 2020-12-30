@@ -30,4 +30,6 @@ public abstract class MapModel {
     public abstract  Theme getTheme();
 
     public abstract void setLatticeTypeList(int[] latticeTypeList);
+
+    public abstract int getTypeNum();
 }

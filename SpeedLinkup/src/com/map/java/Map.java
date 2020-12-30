@@ -6,7 +6,7 @@ import com.configuration.java.Theme;
 import java.util.*;
 
 /**
- *@author 王瀚霆
+ * @author 王瀚霆
  */
 
 public class Map {
@@ -20,7 +20,7 @@ public class Map {
     private Path path;
 
     /**
-     *构建新地图
+     * 构建新地图
      */
     public static Map getNewMap(MapModel mapModel) {
         return new Map(mapModel.getRowNum(), mapModel.getColumnNum(),
@@ -28,7 +28,7 @@ public class Map {
     }
 
     /**
-     *从一个数组中获取一个地图
+     * 从一个数组中获取一个地图
      */
     public static Map getOldMap(MapModel mapModel, int[][] typeArray) {
         return new Map(mapModel.getRowNum(), mapModel.getColumnNum(),
@@ -80,6 +80,7 @@ public class Map {
         }
         return false;
     }
+
     public boolean judge(Lattice.Point point1, Lattice.Point point2) {
         return judge(point1, point2, true);
     }
@@ -100,7 +101,7 @@ public class Map {
     }
 
     /**
-     *获取剩余的格子数量
+     * 获取剩余的格子数量
      */
     public int getRestLatticeAmount() {
         return restLatticeAmount;
@@ -120,6 +121,7 @@ public class Map {
         if (restLatticeAmount == 0) {
             return null;
         }
+        System.out.println("typeNum: " + typeNum);
         for (int index = 0; index < typeNum; index++) {
             List<Lattice.Point> points = new ArrayList<>();
             for (int i = 1; i < rowNum + 1; i++) {
@@ -129,6 +131,7 @@ public class Map {
                     }
                 }
             }
+            System.out.println("type "+ typeList[index] + " : "+ points);
             for (int i = 0; i < points.size() - 1; i++) {
                 for (int j = i + 1; j < points.size(); j++) {
                     if (judge(points.get(i), points.get(j), false)) {
@@ -214,47 +217,47 @@ public class Map {
     }
 
     public void setLimitLattice(int type, int limit_amount) {
-        if(limit_amount < 2) {
+        if (limit_amount < 2) {
             throw new RuntimeException("一个种类的数量必须大于等于2!");
         }
         boolean flag = true;
         int index;
-        for(index = 0; index < typeList.length; index++) {
-            if(typeList[index] == type) {
+        for (index = 0; index < typeList.length; index++) {
+            if (typeList[index] == type) {
                 flag = false;
                 break;
             }
         }
-        if(flag) {
+        if (flag) {
             throw new RuntimeException("种类列表中不包含此种类！");
         }
         ArrayList<Lattice.Point> points = new ArrayList<>();
-        for(int i = 0; i < rowNum+2; i++) {
-            for(int j = 0; j < columnNum+2; j++) {
-                if(lattices[i][j] != null && lattices[i][j].getType() == type) {
+        for (int i = 0; i < rowNum + 2; i++) {
+            for (int j = 0; j < columnNum + 2; j++) {
+                if (lattices[i][j] != null && lattices[i][j].getType() == type) {
                     points.add(new Lattice.Point(j, i));
                 }
             }
         }
-        int new_amount = (new Random().nextInt(limit_amount >> 1) )<< 1;
+        int new_amount = (new Random().nextInt(limit_amount >> 1)) << 1;
         System.out.println("新的数量:" + new_amount);
         int present_size = points.size();
-        while(present_size > new_amount || present_size > limit_amount) {
+        while (present_size > new_amount || present_size > limit_amount) {
 
             Lattice.Point point1;
             int index1 = new Random().nextInt(points.size());
             point1 = points.get(index1);
             points.remove(index1);
-            present_size --;
+            present_size--;
 
             Lattice.Point point2;
             int index2 = new Random().nextInt(points.size());
             point2 = points.get(index2);
             points.remove(index2);
-            present_size --;
+            present_size--;
 
             int new_type = 0;
-            while(new_type == type || new_type == 0) {
+            while (new_type == type || new_type == 0) {
                 new_type = typeList[new Random().nextInt(typeList.length)];
             }
             lattices[point1.y][point1.x] = new Lattice(new_type);
@@ -263,13 +266,14 @@ public class Map {
     }
 
     public void setLattice(Lattice lattice, Lattice.Point point) {
-        if(lattice != null) {
+        if (lattice != null) {
             lattices[point.y][point.x] = lattice;
         }
     }
 
 
     //--------------------------------------------私有-------------------------------------------------------
+
     /**
      * 【rowNum：行数，columnNum：列数，typeNum：格子种类数】
      * 实际行数为 rowNum+2
@@ -281,13 +285,13 @@ public class Map {
             throw new RuntimeException("地图格子数量不得为奇数");
         }
         Set set = new HashSet();
-        for(int type: typeList) {
-            if(type == 0) {
+        for (int type : typeList) {
+            if (type == 0) {
                 throw new RuntimeException("种类值不得为0！");
             }
             set.add(type);
         }
-        if(set.size() < typeList.length) {
+        if (set.size() < typeList.length) {
             throw new RuntimeException("种类数存在重复数据！");
         }
         this.rowNum = rowNum;
@@ -303,13 +307,13 @@ public class Map {
             throw new RuntimeException("地图格子数量不得为奇数");
         }
         Set set = new HashSet();
-        for(int type: typeList) {
-            if(type <= 0) {
+        for (int type : typeList) {
+            if (type <= 0) {
                 throw new RuntimeException("种类值不得为负数！");
             }
             set.add(type);
         }
-        if(set.size() < typeList.length) {
+        if (set.size() < typeList.length) {
             throw new RuntimeException("种类数存在重复数据！");
         }
         this.rowNum = rowNum;
@@ -322,7 +326,7 @@ public class Map {
             for (int j = 0; j < columnNum + 2; j++) {
                 if (typeArray[i][j] != 0) {
                     lattices[i][j] = new Lattice(typeArray[i][j]);
-                    restLatticeAmount ++;
+                    restLatticeAmount++;
                 } else {
                     lattices[i][j] = null;
                 }
@@ -367,8 +371,8 @@ public class Map {
             lattices[y][x] = new Lattice(lattices[r_y][r_x].getType());
             lattices[r_y][r_x] = new Lattice(type);
             int index;
-            for(index = 0; index < typeList.length; index++) {
-                if(typeList[index] == type) {
+            for (index = 0; index < typeList.length; index++) {
+                if (typeList[index] == type) {
                     break;
                 }
             }
@@ -390,11 +394,11 @@ public class Map {
         Path.PathNode node = path.getTerminationPointNode();
         if (point1.y < point2.y) {
             for (int i = point1.y + 1; i < point2.y; i++) {
-                if(changePath) {
+                if (changePath) {
                     path.addPoint(new Lattice.Point(point1.x, i));
                 }
                 if (lattices[i][point1.x] != null) {
-                    if(changePath) {
+                    if (changePath) {
                         path.deleteNewPoints(node);
                     }
                     return false;
@@ -402,11 +406,11 @@ public class Map {
             }
         } else {
             for (int i = point1.y - 1; i > point2.y; i--) {
-                if(changePath) {
+                if (changePath) {
                     path.addPoint(new Lattice.Point(point1.x, i));
                 }
                 if (lattices[i][point1.x] != null) {
-                    if(changePath) {
+                    if (changePath) {
                         path.deleteNewPoints(node);
                     }
                     return false;
@@ -429,11 +433,11 @@ public class Map {
         Path.PathNode node = path.getTerminationPointNode();
         if (point1.x < point2.x) {
             for (int j = point1.x + 1; j < point2.x; j++) {
-                if(changePath) {
+                if (changePath) {
                     path.addPoint(new Lattice.Point(j, point1.y));
                 }
                 if (lattices[point1.y][j] != null) {
-                    if(changePath) {
+                    if (changePath) {
                         path.deleteNewPoints(node);
                     }
                     return false;
@@ -441,11 +445,11 @@ public class Map {
             }
         } else {
             for (int j = point1.x - 1; j > point2.x; j--) {
-                if(changePath) {
+                if (changePath) {
                     path.addPoint(new Lattice.Point(j, point1.y));
                 }
                 if (lattices[point1.y][j] != null) {
-                    if(changePath) {
+                    if (changePath) {
                         path.deleteNewPoints(node);
                     }
                     return false;
@@ -466,32 +470,32 @@ public class Map {
         Lattice.Point m = new Lattice.Point(point1.x, point2.y);
         if (lattices[m.y][m.x] == null) {
             if (judgeVertical(point1, m, changePath)) {
-                if(changePath) {
+                if (changePath) {
                     path.addPoint(m);
                 }
                 if (judgeHorizon(m, point2, changePath)) {
                     return true;
                 }
             }
-            if(changePath) {
+            if (changePath) {
                 path.deleteNewPoints(node);
             }
         }
         Lattice.Point n = new Lattice.Point(point2.x, point1.y);
         if (lattices[n.y][n.x] == null) {
             if (judgeHorizon(point1, n, changePath)) {
-                if(changePath) {
+                if (changePath) {
                     path.addPoint(n);
                 }
                 if (judgeVertical(n, point2, changePath)) {
                     return true;
                 }
             }
-            if(changePath) {
+            if (changePath) {
                 path.deleteNewPoints(node);
             }
         }
-        if(changePath) {
+        if (changePath) {
             path.deleteNewPoints(node);
         }
         return false;
@@ -505,7 +509,7 @@ public class Map {
 
         int x1 = point1.x - 1;
         while (x1 > -1 && lattices[point1.y][x1] == null) {
-            if(changePath) {
+            if (changePath) {
                 path.addPoint(new Lattice.Point(x1, point1.y));
             }
             if (judgeTurnOnce(new Lattice.Point(x1, point1.y), point2, changePath)) {
@@ -513,13 +517,13 @@ public class Map {
             }
             x1--;
         }
-        if(changePath) {
+        if (changePath) {
             path.deleteNewPoints(node);
         }
 
         int x2 = point1.x + 1;
         while (x2 < rowNum + 2 && lattices[point1.y][x2] == null) {
-            if(changePath) {
+            if (changePath) {
                 path.addPoint(new Lattice.Point(x2, point1.y));
             }
             if (judgeTurnOnce(new Lattice.Point(x2, point1.y), point2, changePath)) {
@@ -527,13 +531,13 @@ public class Map {
             }
             x2++;
         }
-        if(changePath) {
+        if (changePath) {
             path.deleteNewPoints(node);
         }
 
         int y1 = point1.y - 1;
         while (y1 > -1 && lattices[y1][point1.x] == null) {
-            if(changePath) {
+            if (changePath) {
                 path.addPoint(new Lattice.Point(point1.x, y1));
             }
             if (judgeTurnOnce(new Lattice.Point(point1.x, y1), point2, changePath)) {
@@ -541,13 +545,13 @@ public class Map {
             }
             y1--;
         }
-        if(changePath) {
+        if (changePath) {
             path.deleteNewPoints(node);
         }
 
         int y2 = point1.y + 1;
         while (y2 < columnNum + 2 && lattices[y2][point1.x] == null) {
-            if(changePath) {
+            if (changePath) {
                 path.addPoint(new Lattice.Point(point1.x, y2));
             }
             if (judgeTurnOnce(new Lattice.Point(point1.x, y2), point2, changePath)) {
@@ -555,7 +559,7 @@ public class Map {
             }
             y2++;
         }
-        if(changePath) {
+        if (changePath) {
             path.deleteNewPoints(node);
         }
 
@@ -619,7 +623,7 @@ public class Map {
 
     //remove before launching
     public static void main(String[] args) {
-        Map map = new Map(10, 10, new int[]{101,102,103,104,105,106,107,108,109});
+        Map map = new Map(10, 10, new int[]{101, 102, 103, 104, 105, 106, 107, 108, 109});
 //        map.setLimitLattice(-1, 4);
 //        map.autoPlay();
 //        NormalArchive.deleteArchive();
@@ -642,13 +646,13 @@ public class Map {
 
     //remove before launching
     public void getStatic() {
-        for(int index = 0; index < typeList.length; index ++) {
+        for (int index = 0; index < typeList.length; index++) {
             System.out.print(typeList[index] + ":");
             int amount = 0;
-            for(int row = 0; row < rowNum+2; row ++) {
-                for(int column = 0; column < columnNum +2; column ++) {
-                    if(lattices[row][column] != null && lattices[row][column].getType() == typeList[index]) {
-                        amount ++;
+            for (int row = 0; row < rowNum + 2; row++) {
+                for (int column = 0; column < columnNum + 2; column++) {
+                    if (lattices[row][column] != null && lattices[row][column].getType() == typeList[index]) {
+                        amount++;
                     }
                 }
             }
@@ -673,7 +677,7 @@ public class Map {
             System.out.println(points.get(1));
             System.out.println(getType(points.get(0)) + " " + getType(points.get(1)));
             click(points.get(0), points.get(1));
-            System.out.println(getRestLatticeAmount()+ "\n");
+            System.out.println(getRestLatticeAmount() + "\n");
         }
     }
 

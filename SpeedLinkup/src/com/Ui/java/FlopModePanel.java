@@ -333,7 +333,7 @@ public class FlopModePanel extends JPanel implements MouseListener, MouseMotionL
 //                    drawLine(Color.BLACK);
                     map.removeLattice(pointOne);
                     map.removeLattice(pointTwo);
-                    TypicalArchive.saveArchiveInfo(map, model, theme, hour, minute, second);
+                    TypicalArchive.saveArchiveInfo(map, model, theme, time);
                     System.out.println(true);
                     g.fillRect(changeLocation(pointOne)[0], changeLocation(pointOne)[1],
                             picture_width + 1, picture_height + 1);

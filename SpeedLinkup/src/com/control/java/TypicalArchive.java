@@ -33,6 +33,8 @@ public final class TypicalArchive {
     private int minute;
     private int second;
 
+    private static TypicalArchive archive;
+
     private TypicalArchive(Map map, MapModel mapModel, Theme theme, int hour, int minute, int second) {
         this.map = map;
         this.mapModel = mapModel;
@@ -42,7 +44,19 @@ public final class TypicalArchive {
         this.second = second;
     }
 
-    public static void saveArchiveInfo(Map map, MapModel mapModel, Theme theme, int hour, int minute, int second) {
+    public static void saveArchiveInfo(TypicalArchive archive) {
+        saveArchiveInfo(archive.getMap(), archive.getMapModel(), archive.getTheme(),
+                archive.getHour(), archive.getMinute(), archive.getSecond());
+    }
+
+    public static void saveArchiveInfo(Map map, MapModel mapModel, Theme theme, int time) {
+        int hour = time / 3600;
+        int minute = time / 60 % 60;
+        int second = time % 60;
+        saveArchiveInfo(map, mapModel, theme, hour, minute, second);
+    }
+
+    private static void saveArchiveInfo(Map map, MapModel mapModel, Theme theme, int hour, int minute, int second) {
         try {
             File file = new File("save/TypicalArchive.xml");
             Document doc = DocumentBuilderFactory
@@ -153,8 +167,8 @@ public final class TypicalArchive {
 
     public static TypicalArchive newArchive(MapModel mapModel) {
         Theme theme = ThemeFactory.getRandomTheme();
+        mapModel.setLatticeTypeList(theme.getLatticeTypeList(10));
         Map map = Map.getNewMap(mapModel);
-//        saveArchiveInfo(map, mapModel, theme, 0, 2, 30);
         return new TypicalArchive(map, mapModel, theme, 0, 2, 30);
     }
 

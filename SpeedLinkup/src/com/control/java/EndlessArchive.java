@@ -47,6 +47,21 @@ public class EndlessArchive {
         this.roundNum = roundNum;
     }
 
+    public static void saveArchiveInfo(EndlessArchive archive) {
+        saveArchiveInfo(archive.getMap(), archive.getMapModel(),archive.getTheme(),
+                archive.getHour(), archive.getMinute(), archive.getSecond(),
+                archive.getScore(), archive.getRoundNum());
+    }
+
+    public static void saveArchiveInfo(Map map, MapModel mapModel, Theme theme,
+                                       int time, int score, int roundNum) {
+        int hour = time / 3600;
+        int minute = time / 60 % 60;
+        int second = time % 60;
+        saveArchiveInfo(map, mapModel, theme, hour, minute, second, score, roundNum);
+    }
+
+
     public static void saveArchiveInfo(Map map, MapModel mapModel, Theme theme,
                                        int hour, int minute, int second,
                                        int score, int roundNum) {
