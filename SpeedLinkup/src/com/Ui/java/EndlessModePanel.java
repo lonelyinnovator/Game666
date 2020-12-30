@@ -150,7 +150,11 @@ public class EndlessModePanel extends JPanel implements MouseMotionListener, Mou
         paint(gImage);
         g.drawImage(offScreenImage, 0, 0, null);
     }
-
+    
+    /**
+     * 绘制
+     * @param g
+     */
     public void drawAllImage(Graphics g){
     	drawBackground(g);
     	drawLatticeImage(g);
@@ -208,8 +212,18 @@ public class EndlessModePanel extends JPanel implements MouseMotionListener, Mou
             }
             if (map.judge(point1, point2)) {
                 //增加时间和分数
-//                this.time += 2;
-                endlessModeFrame.integral += 10;
+            	if(map.judgetype(point1, point2) == 1) {
+            		this.time += 1;
+            		endlessModeFrame.integral += 5;
+            	}else if(map.judgetype(point1, point2) == 2) {
+            		this.time += 2;
+            		endlessModeFrame.integral += 10;
+            	}else if(map.judgetype(point1, point2) == 3) {
+            		this.time += 3;
+            		endlessModeFrame.integral += 20;
+            	}
+            	
+//                endlessModeFrame.integral += 10;
                 endlessModeFrame.jLabel_integral.setText("当前积分：" + endlessModeFrame.integral);
                 drawLine();
 				Thread.sleep(100);
@@ -226,7 +240,7 @@ public class EndlessModePanel extends JPanel implements MouseMotionListener, Mou
                     endlessArchive = EndlessArchive.newArchive();
                     initEndlessModePanel(endlessModeFrame, endlessArchive);
                     this.time += 10;
-                    endlessModeFrame.integral += 10;
+                    endlessModeFrame.integral += 100;
                     endlessModeFrame.number += 1;
                     endlessModeFrame.jLabel_number.setText("当前轮数：" + endlessModeFrame.number);
                     EndlessArchive.saveArchiveInfo(map, model, theme, hour, minute, second,

@@ -7,6 +7,7 @@ import com.map.java.Lattice;
 import com.map.java.Map;
 
 import javax.imageio.ImageIO;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -27,6 +28,8 @@ public class MainUI extends JPanel implements MouseMotionListener, MouseListener
     private static final int WINDOW_WIDTH = 1000;
     private static final int WINDOW_HEIGHT = 800;
     private MainFrame mainFrame;
+    public static boolean musicFlag = true;
+    private SetUI setui;
     Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
     //获取屏幕尺寸
 
@@ -165,8 +168,10 @@ public class MainUI extends JPanel implements MouseMotionListener, MouseListener
         }
         //退出游戏
         else if (x >= 415 && x <= 585 && y >= 535 && y <= 565) {
+            // musicFlag = true;
             mainFrame.dispose();
             System.out.println("5");
+            setui.setMusicFlag(false);
             // mainFrame.dispose();
         }
         //设置

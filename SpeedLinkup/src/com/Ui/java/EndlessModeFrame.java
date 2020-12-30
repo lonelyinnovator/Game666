@@ -1,5 +1,6 @@
 package com.Ui.java;
 
+import com.Ui.java.FlopModeFrame.NewPanel;
 import com.configuration.java.MapModel;
 import com.configuration.java.ModelFactory;
 import com.configuration.java.Theme;
@@ -32,13 +33,13 @@ public class EndlessModeFrame extends JFrame {
     public int integral = 0;
     public int number = 1;
     public String countDown;
-    private boolean stop_flag = false;
+    public boolean stop_flag = false;
     private EndlessModeFrame endlessModeFrame = this;
 
-    JPanel jPanel_east;
-    JPanel jPanel_number;
-    JPanel jPanel_integral;
-    JPanel jPanel_time_remain;
+    NewPanel jPanel_east;
+    NewPanel jPanel_number;
+    NewPanel jPanel_integral;
+    NewPanel jPanel_time_remain;
     JPanel jPanel_continue_stop;
     JPanel jPanel_restart;
     JLabel jLabel_time_remain;
@@ -61,6 +62,22 @@ public class EndlessModeFrame extends JFrame {
         initFrame();
     }
 
+    class NewPanel extends JPanel {
+        ImageIcon icon;
+        Image image;
+
+        public NewPanel(String filePath) {
+            icon = new ImageIcon(filePath);
+            image = icon.getImage();
+            this.setLayout(new BorderLayout());
+        }
+
+        public void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            g.drawImage(image, 0, 0, this.getWidth(), this.getHeight(), this);
+        }
+    }
+    
     private void initFrame() {
         this.setBackground(Color.white);
         this.setTitle("连连看");
@@ -77,29 +94,33 @@ public class EndlessModeFrame extends JFrame {
 
         // 东边面板
         // 对齐方式：从开始位置 水平间隙 垂直间隙
-        jPanel_east = new JPanel(new FlowLayout(FlowLayout.LEADING, 57, 40));
-        jPanel_east.setPreferredSize(new Dimension(244, 50));
+        jPanel_east = new NewPanel("res/ui/end_east_bg.png");
+        jPanel_east.setLayout(new FlowLayout(FlowLayout.LEADING, 57, 40));
+        jPanel_east.setPreferredSize(new Dimension(250, 50));
         jPanel_east.setBackground(Color.PINK);
 
         // 轮数面板
-        jPanel_number = new JPanel(new BorderLayout());
+        jPanel_number = new NewPanel("res/ui/end_east_frame.png");
         jPanel_number.setPreferredSize(new Dimension(165, 80));
+        jPanel_number.setLayout(new FlowLayout(FlowLayout.LEADING, 20, 30));
         jLabel_number = new JLabel("当前轮数：" + this.number);
         jLabel_number.setFont(f);
         jPanel_number.add(jLabel_number, BorderLayout.CENTER);
         jPanel_east.add(jPanel_number);
 
         // 积分面板
-        jPanel_integral = new JPanel(new BorderLayout());
+        jPanel_integral = new NewPanel("res/ui/end_east_frame.png");
         jPanel_integral.setPreferredSize(new Dimension(165, 80));
+        jPanel_integral.setLayout(new FlowLayout(FlowLayout.LEADING, 20, 30));
         jLabel_integral = new JLabel("当前积分：" + this.integral);
         jLabel_integral.setFont(f);
         jPanel_integral.add(jLabel_integral, BorderLayout.CENTER);
         jPanel_east.add(jPanel_integral);
 
         // 剩余时间面板
-        jPanel_time_remain = new JPanel(new BorderLayout());
+        jPanel_time_remain = new NewPanel("res/ui/end_east_frame.png");
         jPanel_time_remain.setPreferredSize(new Dimension(165, 80));
+        jPanel_time_remain.setLayout(new FlowLayout(FlowLayout.LEADING, 20, 30));
         jLabel_time_remain = new JLabel("剩余时间： " + endlessModePanel.minute + ":" + endlessModePanel.second);
         jLabel_time_remain.setFont(f);
         jPanel_time_remain.add(jLabel_time_remain, BorderLayout.CENTER);
@@ -108,8 +129,9 @@ public class EndlessModeFrame extends JFrame {
         // 暂停游戏面板
         jPanel_continue_stop = new JPanel(new BorderLayout());
         jPanel_continue_stop.setPreferredSize(new Dimension(165, 80));
-        jLabel_continue_stop = new JLabel("暂停");
-        jLabel_continue_stop.setFont(f);
+        jLabel_continue_stop = new JLabel();
+        ImageIcon imageIcon_stop_label = new ImageIcon("res/ui/end_east_stop.png");
+        jLabel_continue_stop.setIcon(imageIcon_stop_label);
         jLabel_continue_stop.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -125,7 +147,7 @@ public class EndlessModeFrame extends JFrame {
             public void mouseReleased(MouseEvent e) {
                 stop_flag = true;
                 showStopDialog();
-                stop_flag = false;
+//                stop_flag = false;
             }
 
             @Override
@@ -145,8 +167,9 @@ public class EndlessModeFrame extends JFrame {
         // 重新开始面板
         jPanel_restart = new JPanel(new BorderLayout());
         jPanel_restart.setPreferredSize(new Dimension(165, 80));
-        jLabel_restart = new JLabel("重新开始");
-        jLabel_restart.setFont(f);
+        jLabel_restart = new JLabel();
+        ImageIcon imageIcon_restart_label = new ImageIcon("res/ui/end_east_restart.png");
+        jLabel_restart.setIcon(imageIcon_restart_label);
         jLabel_restart.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -177,6 +200,8 @@ public class EndlessModeFrame extends JFrame {
         });
         jPanel_restart.add(jLabel_restart, BorderLayout.CENTER);
         jPanel_east.add(jPanel_restart);
+        
+        
         this.setLayout(new BorderLayout());
         this.add(jPanel_east, BorderLayout.EAST);
         this.setVisible(true);
@@ -211,6 +236,9 @@ public class EndlessModeFrame extends JFrame {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+            }
+            if(endlessModePanel.time == 0) {
+            	showGameover();
             }
 
         }).start();
@@ -247,6 +275,7 @@ public class EndlessModeFrame extends JFrame {
         jButton_continue.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+            	stop_flag = false;
                 dialog.dispose();
             }
         });
@@ -324,21 +353,42 @@ public class EndlessModeFrame extends JFrame {
         if_button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                EndlessArchive.deleteArchive();
-                endlessArchive = EndlessArchive.newArchive();
-                endlessModePanel.initEndlessModePanel(endlessModeFrame, endlessArchive);
-                endlessModePanel.hour = endlessArchive.getHour();
-                endlessModePanel.minute = endlessArchive.getMinute();
-                endlessModePanel.second = endlessArchive.getSecond();
-                endlessModePanel.time = endlessModePanel.hour * 60 * 60 + endlessModePanel.minute * 60 +
-                        endlessModePanel.second;
-                number = endlessArchive.getRoundNum();
-                integral = endlessArchive.getScore();
-                jLabel_number.setText("当前轮数：" + number);
-                jLabel_integral.setText("当前积分：" + "");
-                jLabel_time_remain.setText("剩余时间：" + endlessModePanel.minute + ":" + endlessModePanel.second);
-                endlessModePanel.reDrawPanel(endlessArchive);
-                dialog.dispose();
+                if(endlessModePanel.time == 0) {
+                	EndlessArchive.deleteArchive();
+                    endlessArchive = EndlessArchive.newArchive();
+                    endlessModePanel.initEndlessModePanel(endlessModeFrame, endlessArchive);
+                    endlessModePanel.hour = endlessArchive.getHour();
+                    endlessModePanel.minute = endlessArchive.getMinute();
+                    endlessModePanel.second = endlessArchive.getSecond();
+                    endlessModePanel.time = endlessModePanel.hour * 60 * 60 + endlessModePanel.minute * 60 +
+                            endlessModePanel.second;
+                    number = endlessArchive.getRoundNum();
+                    integral = endlessArchive.getScore();
+                    jLabel_number.setText("当前轮数：" + number);
+                    jLabel_integral.setText("当前积分：" + integral);
+                    jLabel_time_remain.setText("剩余时间：" + endlessModePanel.minute + ":" + endlessModePanel.second);
+                    endlessModePanel.reDrawPanel(endlessArchive);
+                    save();
+                    showCountDown();
+                    dialog.dispose();
+                }else {
+                	EndlessArchive.deleteArchive();
+                    endlessArchive = EndlessArchive.newArchive();
+                    endlessModePanel.initEndlessModePanel(endlessModeFrame, endlessArchive);
+                    endlessModePanel.hour = endlessArchive.getHour();
+                    endlessModePanel.minute = endlessArchive.getMinute();
+                    endlessModePanel.second = endlessArchive.getSecond();
+                    endlessModePanel.time = endlessModePanel.hour * 60 * 60 + endlessModePanel.minute * 60 +
+                            endlessModePanel.second;
+                    number = endlessArchive.getRoundNum();
+                    integral = endlessArchive.getScore();
+                    jLabel_number.setText("当前轮数：" + number);
+                    jLabel_integral.setText("当前积分：" + integral);
+                    jLabel_time_remain.setText("剩余时间：" + endlessModePanel.minute + ":" + endlessModePanel.second);
+                    endlessModePanel.reDrawPanel(endlessArchive);
+                    save();
+                    dialog.dispose();
+                }
             }
         });
         if_not_panel.add(if_button);
@@ -366,5 +416,94 @@ public class EndlessModeFrame extends JFrame {
         panel.add(text_panel, BorderLayout.CENTER);
         dialog.setContentPane(panel);
         dialog.setVisible(true);
+    }
+    public void save() {
+    	EndlessArchive.saveArchiveInfo(endlessModePanel.map, endlessModePanel.model, endlessModePanel.theme,
+                endlessModePanel.hour, endlessModePanel.minute, endlessModePanel.second,
+                this.integral, this.number);
+    }
+    public void showGameover() {
+    	final JDialog dialog = new JDialog(this, "Game Over", true);
+        dialog.setSize(500, 300);
+        dialog.setResizable(false);
+        dialog.setLocationRelativeTo(this);        
+
+        //对话框面板
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEADING, 100, 10));
+        panel.setBackground(Color.black);
+
+        //设置字体
+        Font f = new Font("等线", Font.BOLD, 24);
+
+        //游戏失败轮数面板
+        JPanel failednumber_panel = new JPanel(new BorderLayout());
+        failednumber_panel.setPreferredSize(new Dimension(300, 50));
+        failednumber_panel.setBackground(Color.ORANGE);
+        JLabel failednumber_label = new JLabel("轮数:" + this.number, JLabel.CENTER);
+        failednumber_label.setFont(f);
+        failednumber_panel.add(failednumber_label, BorderLayout.CENTER);
+
+       //游戏失败积分面板
+        JPanel failedintegral_panel = new JPanel(new BorderLayout());
+        failedintegral_panel.setPreferredSize(new Dimension(300, 50));
+        failedintegral_panel.setBackground(Color.ORANGE);
+        JLabel failedintegral_label = new JLabel("积分:" + this.integral, JLabel.CENTER);
+        failedintegral_label.setFont(f);
+        failedintegral_panel.add(failedintegral_label, BorderLayout.CENTER);
+        
+        //返回开始界面面板
+        JPanel return_panel = new JPanel(new BorderLayout());
+        return_panel.setPreferredSize(new Dimension(300, 50));
+        JButton return_button = new JButton("返回开始界面");
+        return_button.setFocusPainted(false);
+        return_button.setBackground(Color.ORANGE);
+        return_button.setFont(f);
+        return_button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                
+            	dialog.dispose();
+            }
+        });
+        return_panel.add(return_button, BorderLayout.CENTER);
+
+        //新游戏界面面板
+        JPanel newGame_panel = new JPanel(new BorderLayout());
+        newGame_panel.setPreferredSize(new Dimension(300, 50));
+        JButton newGame_button = new JButton("开始新游戏");
+        newGame_button.setFocusPainted(false);
+        newGame_button.setBackground(Color.ORANGE);
+        newGame_button.setFont(f);
+        newGame_button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            	EndlessArchive.deleteArchive();
+                endlessArchive = EndlessArchive.newArchive();
+                endlessModePanel.initEndlessModePanel(endlessModeFrame, endlessArchive);
+                endlessModePanel.hour = endlessArchive.getHour();
+                endlessModePanel.minute = endlessArchive.getMinute();
+                endlessModePanel.second = endlessArchive.getSecond();
+                endlessModePanel.time = endlessModePanel.hour * 60 * 60 + endlessModePanel.minute * 60 +
+                        endlessModePanel.second;
+                number = endlessArchive.getRoundNum();
+                integral = endlessArchive.getScore();
+                jLabel_number.setText("当前轮数：" + number);
+                jLabel_integral.setText("当前积分：" + integral);
+                jLabel_time_remain.setText("剩余时间：" + endlessModePanel.minute + ":" + endlessModePanel.second);
+                endlessModePanel.reDrawPanel(endlessArchive);
+                save();
+                showCountDown();
+            	dialog.dispose();
+            }
+        });
+        newGame_panel.add(newGame_button, BorderLayout.CENTER);
+       
+        panel.add(failednumber_panel);
+        panel.add(failedintegral_panel);
+        panel.add(return_panel);
+        panel.add(newGame_panel);
+        dialog.setContentPane(panel);
+        dialog.setVisible(true);
+        
     }
 }

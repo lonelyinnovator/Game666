@@ -112,7 +112,7 @@ public class TypicalModeFrame extends JFrame {
 
         //东边面板
         jPanel_east = new NewPanel("res/rightUi/east_panel.png");
-        jPanel_east.setLayout(new FlowLayout(FlowLayout.LEADING, 57, 40));
+        jPanel_east.setLayout(new FlowLayout(FlowLayout.LEADING, 40, 80));
         jPanel_east.setPreferredSize(new Dimension(280, 50));
         jPanel_east.setBackground(Color.PINK);
 
@@ -203,7 +203,7 @@ public class TypicalModeFrame extends JFrame {
                 stop_flag = true;
                 showChangeDifficultyDialog(typicalModeFrame, typicalModeFrame);
                 if (change_difficulty_flag) {
-                    ImageIcon imageIcon_easy_label = new ImageIcon("res/ui/easy_label.png");
+                    ImageIcon imageIcon_easy_label = new ImageIcon("res/upUi/easy_label.png");
                     jLabel_easy.setIcon(imageIcon_easy_label);
                     ImageIcon imageIcon_middle_label_selected = new ImageIcon("res/upUi/middle_label_selected.png");
                     jLabel_middle.setIcon(imageIcon_middle_label_selected);
@@ -282,9 +282,28 @@ public class TypicalModeFrame extends JFrame {
         jPanel_hard.add(jLabel_hard, BorderLayout.CENTER);
         jPanel_north.add(jPanel_hard);
 
+        //倒计时面板
+        Font countDown_f = new Font("等线", Font.BOLD, 30);
+        jPanel_time_remain = new NewPanel("res/rightUi/show.png");
+        jPanel_time_remain.setPreferredSize(new Dimension(278, 50));
+        jPanel_time_remain.setLayout(new FlowLayout(FlowLayout.LEADING, 110, 10));
+        jLabel_time_remain = new JLabel(this.minute + ":" + this.second);
+        jLabel_time_remain.setForeground(Color.RED);
+        jLabel_time_remain.setFont(countDown_f);
+        showCountDown();
+        System.out.println("------------------------");
+        System.out.println(this.time);
+        new Thread(() -> {
+            if (this.time == 0) {
+                showFailedDialog();
+            }
+        }).start();
+        jPanel_time_remain.add(jLabel_time_remain);
+        jPanel_north.add(jPanel_time_remain);
+
         //暂停游戏面板
         jPanel_stop = new JPanel(new BorderLayout());
-        jPanel_stop.setPreferredSize(new Dimension(165, 79));
+        jPanel_stop.setPreferredSize(new Dimension(200, 79));
         jLabel_stop = new JLabel();
         ImageIcon imageIcon_stop_label = new ImageIcon("res/rightUi/stop_label.png");
         jLabel_stop.setIcon(imageIcon_stop_label);
@@ -319,7 +338,7 @@ public class TypicalModeFrame extends JFrame {
 
         //重新开始面板
         jPanel_restart = new JPanel(new BorderLayout());
-        jPanel_restart.setPreferredSize(new Dimension(165, 80));
+        jPanel_restart.setPreferredSize(new Dimension(200, 80));
         jLabel_restart = new JLabel();
         ImageIcon imageIcon_restart_label = new ImageIcon("res/rightUi/restart_label.png");
         jLabel_restart.setIcon(imageIcon_restart_label);
@@ -356,7 +375,7 @@ public class TypicalModeFrame extends JFrame {
 
         //增加时间面板
         jPanel_time_increase = new JPanel(new BorderLayout());
-        jPanel_time_increase.setPreferredSize(new Dimension(165, 80));
+        jPanel_time_increase.setPreferredSize(new Dimension(200, 80));
         jLabel_time_increase = new JLabel();
         ImageIcon imageIcon_time_increase_label = new ImageIcon("res/rightUi/time_increase_label.png");
         jLabel_time_increase.setIcon(imageIcon_time_increase_label);
@@ -392,8 +411,9 @@ public class TypicalModeFrame extends JFrame {
 
         //提示面板
         jPanel_hint = new JPanel(new BorderLayout());
-        jPanel_hint.setPreferredSize(new Dimension(165, 80));
+        jPanel_hint.setPreferredSize(new Dimension(200, 80));
         jLabel_hint = new JLabel();
+        jPanel_hint.setBackground(Color.PINK);
         ImageIcon imageIcon_hint_label = new ImageIcon("res/rightUi/hint_label.png");
         jLabel_hint.setIcon(imageIcon_hint_label);
         jLabel_hint.addMouseListener(new MouseListener() {
@@ -441,23 +461,7 @@ public class TypicalModeFrame extends JFrame {
         jPanel_hint.add(jLabel_hint, BorderLayout.CENTER);
         jPanel_east.add(jPanel_hint);
 
-        //倒计时面板
-        jPanel_time_remain = new NewPanel("res/rightUi/show.png");
-        jPanel_time_remain.setPreferredSize(new Dimension(165, 60));
-        jPanel_time_remain.setLayout(new FlowLayout(FlowLayout.LEADING, 110, 21));
-        jLabel_time_remain = new JLabel(this.minute + ":" + this.second);
-        jLabel_time_remain.setForeground(Color.RED);
-        jLabel_time_remain.setFont(f);
-        showCountDown();
-        System.out.println("------------------------");
-        System.out.println(this.time);
-        new Thread(() -> {
-            if (this.time == 0) {
-                showFailedDialog();
-            }
-        }).start();
-        jPanel_time_remain.add(jLabel_time_remain);
-        jPanel_east.add(jPanel_time_remain);
+
 
         //自动面板
 //        JPanel jPanel_auto = new JPanel(new BorderLayout());
@@ -748,6 +752,9 @@ public class TypicalModeFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 typicalArchive = TypicalArchive.newArchive(typicalArchive.getMapModel());
+                TypicalArchive.saveArchiveInfo(typicalArchive.getMap(), typicalArchive.getMapModel(),
+                        typicalArchive.getTheme(), typicalArchive.getHour() * 60 * 60 +
+                                typicalArchive.getMinute() * 60 + typicalArchive.getSecond());
                 initTypicalArchive(typicalArchive);
                 typicalModePanel.initTypicalModePanel(typicalModeFrame);
                 typicalModePanel.reDrawPanel();
@@ -815,6 +822,7 @@ public class TypicalModeFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 typicalArchive = TypicalArchive.newArchive(typicalArchive.getMapModel());
+
                 initTypicalArchive(typicalArchive);
                 typicalModePanel.initTypicalModePanel(typicalModeFrame);
                 typicalModePanel.reDrawPanel();
@@ -836,7 +844,7 @@ public class TypicalModeFrame extends JFrame {
      * @return String
      */
     private void showCountDown() {
-        Font f = new Font("等线", Font.BOLD, 18);
+        Font f = new Font("等线", Font.BOLD, 30);
         new Thread(() -> {
             while (this.time > 0) {
                 if (!stop_flag) {

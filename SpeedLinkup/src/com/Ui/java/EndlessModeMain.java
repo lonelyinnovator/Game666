@@ -20,6 +20,7 @@ public class EndlessModeMain {
                     endlessArchive = EndlessArchive.newArchive();
                 }
                 EndlessModeFrame endlessModeFrame = new EndlessModeFrame(endlessArchive);
+                endlessModeFrame.stop_flag = false;
                 endlessModeFrame.setVisible(true);
             }
         });
