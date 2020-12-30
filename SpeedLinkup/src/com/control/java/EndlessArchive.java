@@ -202,6 +202,15 @@ public class EndlessArchive {
                 0, 2, 30, 0,1);
     }
 
+    public static EndlessArchive newArchive(int[] addedTypes)  {
+        Theme theme = ThemeFactory.getRandomTheme();
+        EndlessModel model = ModelFactory.getEndlessModel(theme);
+        model.addLatticeTypes(addedTypes);
+        Map map = Map.getNewMap(model);
+        return new EndlessArchive(map, model, theme,
+                0, 3, 30,0, 1);
+    }
+
     public static void deleteArchive() {
         File file = new File("save/EndlessArchive");
         if(file.exists()) {
